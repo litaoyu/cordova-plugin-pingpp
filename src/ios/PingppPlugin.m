@@ -5,48 +5,47 @@
 
 - (void)createPayment:(CDVInvokedUrlCommand*)command
 {
-
-    NSString* data = [[command arguments] objectAtIndex:0];
-    NSString* URLScheme = nil;
     self.myCallbackId = command.callbackId;
-
-    NSArray* URLTypes = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleURLTypes"];
-    if (URLTypes != nil) {
-        NSDictionary* dict = [URLTypes objectAtIndex:0];
-        if (dict != nil) {
-            NSArray* URLSchemes = [dict objectForKey:@"CFBundleURLSchemes"];
-            if (URLSchemes != nil) {
-                URLScheme = [URLSchemes objectAtIndex:0];
-            }
-        }
-    }
-
-    //NSLog(@"%@", data);
-
+    
+    NSDictionary* charge = [[command arguments] objectAtIndex:0];
+    NSString* URLScheme = [self getURLScheme];
+    
     UIViewController * __weak weakSelf = self.viewController;
     dispatch_async(dispatch_get_main_queue(), ^{
-
-        [Pingpp createPayment:data viewController:weakSelf
-                appURLScheme: URLScheme
-                withCompletion:^(NSString *result, PingppError *error) {
-            //渠道为银联、百度钱包、支付宝 但未安装相应APP时，从此返回
-            //NSLog(@"completion block: %@", result);
-            [self callbackResult:result error:error];
-
-        }];
+        
+        [Pingpp createPayment:charge viewController:weakSelf
+                 appURLScheme: URLScheme
+               withCompletion:^(NSString *result, PingppError *error) {
+                   
+                   [self callbackResult:result error:error];
+                   
+               }];
     });
+}
+
+-(void)setDebugMode:(CDVInvokedUrlCommand *)command{
+    bool enabled = [[[command arguments] objectAtIndex:0] boolValue];
+    [Pingpp setDebugMode:enabled];
+}
+- (void) getVersion:(CDVInvokedUrlCommand*)command{
+    self.myCallbackId = command.callbackId;
+    NSString *version = [Pingpp version];
+    CDVPluginResult* pluginResult = nil;
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:version];
+    NSLog(@"%@",version);
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:self.myCallbackId];
 }
 
 - (void)handleOpenURL:(NSNotification*)notification
 {
     NSURL* url = [notification object];
-
+    
     NSLog(@"handleOpenURL: %@", [url description]);
-
+    
     if (![url isKindOfClass:[NSURL class]]) {
         return;
     }
-
+    
     [Pingpp handleOpenURL:url withCompletion:^(NSString* result, PingppError* error) {
         [self callbackResult:result error:error];
     }];
@@ -55,13 +54,32 @@
 - (void) callbackResult:(NSString*)result error:(PingppError*) error
 {
     CDVPluginResult* pluginResult = nil;
-
+    
     if ([result isEqualToString:@"success"]) {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
     } else {
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:result];
-        //NSLog(@"PingppError: code=%lu msg=%@", error.code, [error getMsg]); //支付失败
+        
     }
     [self.commandDelegate sendPluginResult:pluginResult callbackId:self.myCallbackId];
 }
+-(NSString *)getURLScheme{
+    
+    NSArray *urlSchemeList = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleURLTypes"];
+    if ([urlSchemeList count] == 0) {
+        NSLog(@"URL Scheme 为空，请在 plugin.xml 添加。");
+        return nil;
+    }
+    NSDictionary *urlSchemeType = [urlSchemeList objectAtIndex:0];
+    NSArray *schemes = [urlSchemeType objectForKey:@"CFBundleURLSchemes"];
+    if ([schemes count] == 0) {
+        NSLog(@"URL Scheme 为空，请在 plugin.xml 添加。");
+        return nil;
+    }
+    NSString *scheme = [schemes objectAtIndex:0];
+    
+    return scheme;
+    
+}
+
 @end

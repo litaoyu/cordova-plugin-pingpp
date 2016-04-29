@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-        id="me.tongchia.cordova.pingpp"
+        id="com.justep.cordova.plugin.pingpp"
         xmlns:android="http://schemas.android.com/apk/res/android"
         version="1.0.1">
 
@@ -10,7 +10,7 @@
     <keywords>pingpp,pingxx,ping++,pingppone,alipay,weixin,bdwallet,unionpay,applepay</keywords>
     <license>Apache 2.0</license>
     <engines>
-        <engine name="cordova" version=">=6.0.0"/>
+        <engine name="cordova" version=">=5.4.1"/>
     </engines>
     <js-module src="www/pingpp.js" name="pingpp">
         <clobbers target="pingpp" />
@@ -19,7 +19,7 @@
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="PingppPlugin">
-                <param name="android-package" value="me.tongchia.cordova.PingppPlugin"/>
+                <param name="android-package" value="com.justep.cordova.plugin.PingppPlugin"/>
             </feature>
         </config-file>
 
@@ -98,10 +98,20 @@
                 <string>alipay</string>
             </array>
         </config-file>
+        <config-file target="*-Info.plist" parent="CFBundleURLTypes">
+            <array>
+                <dict>
+                    <key>CFBundleTypeRole</key>
+                    <string>Editor</string>
+                    <key>CFBundleURLSchemes</key>
+                    <array>
+                        <!-- 填写URL-SCHEME -->
+                        <string>YOUR-APP-URL-SCHEME</string>
+                    </array>
+                </dict>
+            </array>
+        </config-file>
 
-        <info>
-            You need to add URL_SCHEME to your iOS project.
-        </info>
     </platform>
 
     <hook type="before_plugin_install" src="scripts/clone_pingpp_sdk.js" />
