@@ -12,23 +12,29 @@
     <engines>
         <engine name="cordova" version=">=5.4.1"/>
     </engines>
+    
+    <dependency id="plugin.http.request"/>
+    
     <js-module src="www/pingpp.js" name="pingpp">
-        <clobbers target="pingpp" />
+        <clobbers target="navigator.pingpp" />
     </js-module>
 
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="PingppPlugin">
-                <param name="android-package" value="com.justep.cordova.plugin.PingppPlugin"/>
+                <param name="android-package" value="com.justep.cordova.plugin.pingpp.PingppPlugin"/>
             </feature>
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/*">
             <uses-permission android:name="android.permission.INTERNET" />
-            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-            <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-            <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    		<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    		<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    		<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    		<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    		<uses-permission android:name="android.permission.NFC" />
+    		<uses-permission-sdk-23 android:name="android.permission.READ_PHONE_STATE" />
+    		<uses-permission-sdk-23 android:name="android.permission.NFC" />
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="application">
@@ -51,12 +57,30 @@
                     android:configChanges="orientation|keyboardHidden|navigation"
                     android:exported="false"
                     android:screenOrientation="behind" />
+			<activity
+            		android:name="com.unionpay.uppay.PayActivity"
+           			android:configChanges="orientation|keyboardHidden|navigation|screenSize" />
         </config-file>
 
-        <source-file src="src/android/PingppPlugin.java" target-dir="src/me/tongchia/cordova/"/>
+        <source-file src="src/android/PingppPlugin.java" target-dir="src/com/justep/cordova/plugin/pingpp/"/>
         <source-file src="sdk/android/lib/pingpp/libs/alipaySingle-20160111.jar" target-dir="libs"/>
         <source-file src="sdk/android/lib/pingpp/libs/libammsdk.jar" target-dir="libs"/>
         <source-file src="sdk/android/lib/pingpp/libs/libpingpp-2.1.2.jar" target-dir="libs"/>
+        <source-file src="sdk/android/lib/pingpp/libs/UPPayAssistEx.jar" target-dir="libs"/>   
+        <source-file src="sdk/android/lib/pingpp/libs/UPPayPluginExPro.jar" target-dir="libs"/>
+        
+        <source-file src="sdk/android/lib/pingpp/libs/armeabi/libentryexpro.so" target-dir="libs/armeabi"/>
+        <source-file src="sdk/android/lib/pingpp/libs/armeabi/libuptsmaddon.so" target-dir="libs/armeabi"/>
+        <source-file src="sdk/android/lib/pingpp/libs/arm64-v8a/libuptsmaddon.so" target-dir="libs/arm64-v8a"/>
+        <source-file src="sdk/android/lib/pingpp/libs/arm64-v8a/libentryexpro.so" target-dir="libs/arm64-v8a"/>
+		<source-file src="sdk/android/lib/pingpp/libs/armeabi-v7a/libentryexpro.so" target-dir="libs/armeabi-v7a"/>
+		<source-file src="sdk/android/lib/pingpp/libs/armeabi-v7a/libuptsmaddon.so" target-dir="libs/armeabi-v7a"/>
+		<source-file src="sdk/android/lib/pingpp/libs/mips/libentryexpro.so" target-dir="libs/mips"/>
+		<source-file src="sdk/android/lib/pingpp/libs/x86/libentryexpro.so" target-dir="libs/x86"/>
+		<source-file src="sdk/android/lib/pingpp/libs/x86/libuptsmaddon.so" target-dir="libs/x86"/>
+		<source-file src="sdk/android/lib/pingpp/libs/x86_64/libuptsmaddon.so" target-dir="libs/x86_64"/>
+		<source-file src="sdk/android/lib/pingpp/libs/x86_64/libentryexpro.so" target-dir="libs/x86_64"/>
+		<source-file src="sdk/android/lib/pingpp/libs/data.bin" target-dir="assets"/>
     </platform>
 
     <platform name="ios">
