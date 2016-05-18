@@ -1,19 +1,9 @@
 /**
  * ping++, cordova, module
- * Author: Tong Chia
  * License: Apache License 2.0
  * */
 
 module.exports = {
-    /**
-     * @param {object|string} charge
-     * @param {Function} successCallback ['success']
-     * @param {Function} errorCallback ['fail'|'cancel'|'invalid']
-     */
-    createPayment: function (charge, successCallback, errorCallback) {
-         if (typeof charge === 'object') { charge = JSON.stringify(charge); }
-         cordova.exec(successCallback, errorCallback, "PingppPlugin", "createPayment", [charge]);
-    },
     /**
      * @param {var|boll} enabled
      */
@@ -25,5 +15,28 @@ module.exports = {
      */
     getVersion:function(successCallback){
         cordova.exec(successCallback, function(){}, "PingppPlugin", "getVersion", []);
-    }
+    },
+    /**
+     * @param {object|string} params
+     * @param {object|string} url
+     * @param {Function} successCallback ['success']
+     * @param {Function} errorCallback ['fail'|'cancel'|'invalid']
+     */
+    requestPayment:function (params, url, header, successCallback, errorCallback) {
+    	
+    	window.cordovaHTTP.post(url, params, header, function(response) {
+    		 
+    		 var charge = response.data;
+			 if (typeof charge === 'object') { charge = JSON.stringify(charge); }
+	         cordova.exec(function(response){
+	        	 if(typeof response !== 'object'){ response = JSON.parse(response);}
+	        	 successCallback(response.result, response.err);
+	         }, function(response){
+	        	 if(typeof response !== 'object'){ response = JSON.parse(response);}
+	        	 errorCallback(response.result, response.err);
+	         }, "PingppPlugin", "createPayment", [charge]);
+		}, function(response) {
+			error(response, null);
+		});
+    },
 };

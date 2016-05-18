@@ -1,4 +1,4 @@
-package com.justep.cordova.plugin;
+package com.justep.cordova.plugin.pingpp;
 
 import android.content.ComponentName;
 import android.content.Intent;
@@ -7,6 +7,7 @@ import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import android.util.Log;
 import com.pingplusplus.android.Pingpp;
 import com.pingplusplus.android.PingppLog;
@@ -15,6 +16,7 @@ public class PingppPlugin extends CordovaPlugin {
 
 	private static final int REQUEST_CODE_PAYMENT = 1;
 	private CallbackContext callbackContext;
+	private String charge;
 
 	@Override
     public boolean execute(String action, JSONArray data, CallbackContext callbackContext) throws JSONException {
@@ -22,7 +24,7 @@ public class PingppPlugin extends CordovaPlugin {
         this.callbackContext = callbackContext;
         
         if (action.equals("createPayment")) {
-            String charge = data.get(0).toString();
+            charge = data.get(0).toString();
 
             Intent intent = new Intent(this.cordova.getActivity(), PaymentActivity.class);
             intent.putExtra(PaymentActivity.EXTRA_CHARGE, charge);
@@ -50,12 +52,24 @@ public class PingppPlugin extends CordovaPlugin {
 				String result = data.getExtras().getString("pay_result");
 				String errorMsg = data.getExtras().getString("error_msg"); // 错误信息
 				String extraMsg = data.getExtras().getString("extra_msg"); // 错误信息
-
-				if (result.equals("success")) {
-					callbackContext.success(result);
-				} else {
-					callbackContext.error(result + errorMsg);
-				}
+				
+				try{
+					JSONObject object = new JSONObject();
+					JSONObject err = new JSONObject();
+					err.put("charge", charge);
+					if (result.equals("success")) {
+						object.put("err", err);
+						object.put("result", result);
+						callbackContext.success(object);
+					} else {
+						err.put("msg",errorMsg);
+						object.put("err", err);
+						object.put("result", result);
+						callbackContext.error(object);
+					}
+				} catch (JSONException e) {
+                    e.printStackTrace();
+                }
 			} else if (resultCode == android.app.Activity.RESULT_CANCELED) {
 				callbackContext.error("cancel");
 			}

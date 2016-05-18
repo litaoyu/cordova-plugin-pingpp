@@ -13,7 +13,7 @@
         <engine name="cordova" version=">=5.4.1"/>
     </engines>
     
-    <dependency id="plugin.http.request"/>
+    <dependency id="cordova-plugin-http"/>
     
     <js-module src="www/pingpp.js" name="pingpp">
         <clobbers target="navigator.pingpp" />
@@ -40,7 +40,7 @@
         <config-file target="AndroidManifest.xml" parent="application">
             <activity
                     android:name="com.pingplusplus.android.PaymentActivity"
-                    android:configChanges="orientation|screenSize"
+                    android:configChanges="orientation|screenSize|keyboardHidden|navigation"
                     android:launchMode="singleTop"
                     android:theme="@android:style/Theme.Translucent.NoTitleBar" />
             <activity-alias
@@ -49,12 +49,12 @@
                     android:targetActivity="com.pingplusplus.android.PaymentActivity" />
             <activity
                     android:name="com.alipay.sdk.app.H5PayActivity"
-                    android:configChanges="orientation|keyboardHidden|navigation"
+                    android:configChanges="orientation|keyboardHidden|navigation|screenSize"
                     android:exported="false"
                     android:screenOrientation="behind" />
             <activity
                     android:name="com.alipay.sdk.auth.AuthActivity"
-                    android:configChanges="orientation|keyboardHidden|navigation"
+                    android:configChanges="orientation|keyboardHidden|navigation|screenSize"
                     android:exported="false"
                     android:screenOrientation="behind" />
 			<activity
@@ -97,10 +97,8 @@
         <resource-file src="sdk/ios/lib/Channels/Alipay/AlipaySDK.bundle"/>
         <framework src="sdk/ios/lib/Channels/Alipay/AlipaySDK.framework" custom="true"/>
         <source-file src="sdk/ios/lib/Channels/Alipay/libpingpp+alipay.a" framework="true"/>
-        <source-file src="sdk/ios/lib/Channels/Wx/libpingpp+wx.a" framework="true"/>
-        <source-file src="sdk/ios/lib/Channels/Wx/libWeChatSDK.a" framework="true"/>
-        <header-file src="sdk/ios/lib/Channels/Wx/WXApi.h" />
-        <header-file src="sdk/ios/lib/Channels/Wx/WXApiObject.h" />
+        <source-file src="sdk/ios/lib/Channels/UnionPay/libPaymentControl.a" framework="true"/>
+        <source-file src="sdk/ios/lib/Channels/UnionPay/libpingpp+up.a" framework="true"/>
         <resource-file src="sdk/ios/lib/Pingpp.bundle"/>
         <source-file src="sdk/ios/lib/libpingppcore.a" framework="true"/>
         <header-file src="sdk/ios/lib/Pingpp.h"/>

@@ -19,11 +19,23 @@ javascript
 ```
 js
 //调用支付功能            
-pingpp.createPayment(charge, function(result){
-    console.log('suc: '+result);  // "success"
-  }, function(result){
-    console.log('err: '+result);  // "fail"|"cancel"|"invalid"
-});
+var param = {
+                channel: "alipay",
+                amount: 10,
+                custom_params:{
+                	extra1:'extra1',
+                	extra2:'extra2'
+                }
+            };
+		var header = {"Content-Type":"application/json"}
+		pingpp.requestPayment(param,'http://218.244.151.190/demo/charge', header, function(result, err) {
+			alert('res: ' + result); // "success"
+			alert("charge::" + err.charge);
+		}, function(result, err) {
+			alert('res: ' + result); // "fail"|"cancel"|"invalid"
+			alert('charge::' + err.charge);
+			alert('msg::' + err.msg);
+		});
 
 //开启debug模式
 pingpp.setDebugMode(enabled) // [true] or [false];
@@ -35,25 +47,7 @@ pingpp.getVersion(function(version){
 
 ```
 
-with Angular (#ionic)
 
-```
-js
-angular.module('yourApp', [])
-  .factory('$pingpp', ['$q', '$window', function ($q, $window) {
-    return {
-      createPayment: function (charge) {
-        return $q(function (resolve, reject) {
-          $window.pingpp.createPayment(charge, function () {
-            resolve();
-          }, function (err) {
-            reject(err);
-          });
-        });
-      }
-    };
-  }]);
-```
 
 ## More Info
 

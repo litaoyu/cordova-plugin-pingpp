@@ -2,12 +2,13 @@
 #import "Pingpp.h"
 
 @implementation PingppPlugin
-
+NSDictionary *charge ;
 - (void)createPayment:(CDVInvokedUrlCommand*)command
 {
+    [Pingpp setDebugMode:YES];
     self.myCallbackId = command.callbackId;
     
-    NSDictionary* charge = [[command arguments] objectAtIndex:0];
+    charge = [[command arguments] objectAtIndex:0];
     NSString* URLScheme = [self getURLScheme];
     
     UIViewController * __weak weakSelf = self.viewController;
@@ -16,9 +17,8 @@
         [Pingpp createPayment:charge viewController:weakSelf
                  appURLScheme: URLScheme
                withCompletion:^(NSString *result, PingppError *error) {
-                   
-                   [self callbackResult:result error:error];
-                   
+                   [self callbackResult: result charge:charge  error:error];
+
                }];
     });
 }
@@ -47,18 +47,30 @@
     }
     
     [Pingpp handleOpenURL:url withCompletion:^(NSString* result, PingppError* error) {
-        [self callbackResult:result error:error];
+        [self callbackResult:result charge:charge error:error];
     }];
 }
 
-- (void) callbackResult:(NSString*)result error:(PingppError*) error
+- (void) callbackResult:(NSString*)result charge:(NSDictionary *)charge error:(PingppError*) error
 {
     CDVPluginResult* pluginResult = nil;
-    
+    NSMutableDictionary * errorDic = [NSMutableDictionary dictionary];
+    NSLog(@"result:%@",result);
     if ([result isEqualToString:@"success"]) {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"success"];
+        [errorDic setValue:@{@"charge":charge} forKey:@"err"];
+        [errorDic setValue:result forKey:@"result"];
+        NSData* data = [NSJSONSerialization dataWithJSONObject:errorDic options:NSJSONWritingPrettyPrinted error:nil];
+        NSString *jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:jsonString];
+        
     } else {
-        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:result];
+        
+        [errorDic setValue:@{@"charge":charge,@"msg":error.getMsg}
+                              forKey:@"err"];
+        [errorDic setValue:result forKey:@"result"];
+        NSData* data = [NSJSONSerialization dataWithJSONObject:errorDic options:NSJSONWritingPrettyPrinted error:nil];
+        NSString *jsonString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:jsonString];
         
     }
     [self.commandDelegate sendPluginResult:pluginResult callbackId:self.myCallbackId];
