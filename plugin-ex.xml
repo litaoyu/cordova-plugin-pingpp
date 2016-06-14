@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" id="com.justep.cordova.plugin.pingpp">
+	<name>Pingpp</name>
+	<description>Pingpp本地扩展插件，包括微信支付，支付宝支付和银联支付</description>
+
+	<!-- ios -->
+	<platform name="ios">
+		<param name="pingpp_url_scheme" displayName="url_scheme" />
+	</platform>
+	
+</plugin>

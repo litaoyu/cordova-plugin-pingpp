@@ -93,7 +93,8 @@
         <framework src="libz.tbd" />
         <framework src="libsqlite3.0.tbd" />
         <framework src="libstdc++.tbd" />
-
+        <framework src="CoreTelephony.framework" />
+        <framework src="CoreMotion.framework" />
         <resource-file src="sdk/ios/lib/Channels/Alipay/AlipaySDK.bundle"/>
         <framework src="sdk/ios/lib/Channels/Alipay/AlipaySDK.framework" custom="true"/>
         <source-file src="sdk/ios/lib/Channels/Alipay/libpingpp+alipay.a" framework="true"/>
@@ -111,6 +112,7 @@
             <feature name="PingppPlugin">
                 <param name="ios-package" value="PingppPlugin"/>
             </feature>
+            <preference name="pingpp_url_scheme" value="$pingpp_url_scheme" />
         </config-file>
 
         <config-file target="*-Info.plist" parent="LSApplicationQueriesSchemes">
@@ -128,7 +130,7 @@
                     <key>CFBundleURLSchemes</key>
                     <array>
                         <!-- 填写URL-SCHEME -->
-                        <string>YOUR-APP-URL-SCHEME</string>
+                        <string>$pingpp_url_scheme</string>
                     </array>
                 </dict>
             </array>
